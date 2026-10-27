@@ -1,0 +1,26 @@
+.mode-toggle { display: flex; background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 3px; margin-bottom: 14px; }
+.mode-btn { flex: 1; padding: 0.5rem; font-size: 13px; font-weight: 500; color: var(--color-text-secondary); background: transparent; border: none; border-radius: calc(var(--border-radius-lg) - 3px); cursor: pointer; transition: background 0.15s, color 0.15s; }
+.mode-btn.active { background: var(--color-background-primary); color: var(--color-text-primary); border: 0.5px solid var(--color-border-tertiary); }
+
+.tracker-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.tracker-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+.tracker-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 10px; }
+
+.timer-display { font-size: 48px; font-weight: 500; color: var(--color-text-primary); text-align: center; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+.timer-display.warning { color: #D85A30; }
+.round-timer-display { font-size: 40px; font-weight: 500; color: var(--color-text-primary); text-align: center; font-variant-numeric: tabular-nums; }
+.round-timer-display.warning { color: #D85A30; }
+.timer-btns { display: flex; gap: 8px; margin-top: 12px; }
+.timer-btns button { flex: 1; padding: 0.55rem; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--color-text-primary); transition: background 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.timer-btns button:active { background: var(--color-background-secondary); }
+
+.counter-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.counter-val { font-size: 40px; font-weight: 500; color: var(--color-text-primary); min-width: 60px; text-align: center; font-variant-numeric: tabular-nums; }
+.counter-btn { width: 40px; height: 40px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; cursor: pointer; font-size: 20px; font-weight: 500; color: var(--color-text-primary); display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+.counter-btn:active { background: var(--color-background-secondary); }
+.reset-all { display: block; width: 100%; margin-top: 4px; padding: 0.55rem; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; cursor: pointer; font-size: 13px; color: var(--color-text-secondary); transition: background 0.1s; }
+.reset-all:active { background: var(--color-background-secondary); }
+
+/* two-tap confirm state */
+button.armed { background: #FFE8E8 !important; border-color: #C0392B !important; color: #8B0000 !important; }
+@media (prefers-color-scheme: dark) { button.armed { background: #3a0000 !important; color: #ff7a7a !important; } }

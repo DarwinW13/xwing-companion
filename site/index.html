@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X-Wing Companion</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/tabs.css">
+  <link rel="stylesheet" href="css/scenarios.css">
+  <link rel="stylesheet" href="css/tracker.css">
+  <link rel="stylesheet" href="css/scoring.css">
+  <link rel="stylesheet" href="css/sheet.css">
+  <link rel="stylesheet" href="css/session.css">
+  <link rel="stylesheet" href="css/rules.css">
+</head>
+<body>
+<div class="tab-bar">
+  <button class="tab-btn active" data-action="showTab" data-tab="scenarios"><i class="ti ti-dice-5" aria-hidden="true"></i>Scenarios</button>
+  <button class="tab-btn" data-action="showTab" data-tab="tracker"><i class="ti ti-trophy" aria-hidden="true"></i>Tracker</button>
+  <button class="tab-btn" data-action="showTab" data-tab="rules"><i class="ti ti-book" aria-hidden="true"></i>Rules</button>
+</div>
+
+<!-- SCENARIOS TAB -->
+<div id="tab-scenarios" class="tab-panel active">
+  <button class="roll-btn" data-action="pickScenario">
+    <div class="btn-label"><i class="ti ti-dice-5" aria-hidden="true"></i> Pick a scenario</div>
+    <div class="btn-sub">5 standard XWA scenarios</div>
+  </button>
+  <div class="result-card" id="result">
+    <div class="scenario-header">
+      <div class="scenario-badge" id="badge">Scenario</div>
+      <div class="scenario-name" id="sname"></div>
+      <div class="scenario-tagline" id="stagline"></div>
+      <div class="scenario-objectives" id="sobjectives"></div>
+    </div>
+    <div class="sections" id="sections"></div>
+  </div>
+</div>
+
+<!-- TRACKER TAB -->
+<div id="tab-tracker" class="tab-panel">
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="mode-standard" data-action="setMode" data-mode="standard">Standard game</button>
+    <button class="mode-btn" id="mode-fangs" data-action="setMode" data-mode="fangs">Fangs out</button>
+  </div>
+  <div class="tracker-grid">
+
+    <div class="tracker-card">
+      <div class="tracker-label" id="game-timer-label"><i class="ti ti-clock" aria-hidden="true" style="font-size:13px;margin-right:4px;"></i>Game timer — 75 min</div>
+      <div class="timer-display" id="game-timer-display">75:00</div>
+      <div class="timer-btns">
+        <button data-action="toggleGameTimer" id="game-toggle-btn">
+          <i class="ti ti-player-play" aria-hidden="true" id="game-timer-icon"></i>
+          <span id="game-toggle-label">Start</span>
+        </button>
+        <button data-action="resetGameTimer"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+      </div>
+    </div>
+
+    <div id="round-timer-card" class="tracker-card" style="display:none;">
+      <div class="tracker-label"><i class="ti ti-hourglass" aria-hidden="true" style="font-size:13px;margin-right:4px;"></i>Dial timer — 2 min</div>
+      <div class="round-timer-display" id="round-timer-display">2:00</div>
+      <div class="timer-btns">
+        <button data-action="toggleRoundTimer" id="round-toggle-btn">
+          <i class="ti ti-player-play" aria-hidden="true" id="round-timer-icon"></i>
+          <span id="round-toggle-label">Start</span>
+        </button>
+        <button data-action="resetRoundTimer"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+      </div>
+    </div>
+
+    <div class="tracker-card">
+      <div class="tracker-label"><i class="ti ti-circle-number-1" aria-hidden="true" style="font-size:13px;margin-right:4px;"></i>Round</div>
+      <div class="counter-row">
+        <button class="counter-btn" data-action="adjustRound" data-delta="-1">−</button>
+        <div class="counter-val" id="round-val">1</div>
+        <button class="counter-btn" data-action="adjustRound" data-delta="1">+</button>
+      </div>
+    </div>
+
+    <!-- XWS paste -->
+    <div class="xws-upload-wrap">
+      <div class="xws-upload-card">
+        <div class="xws-upload-label">Player 1 list</div>
+        <div class="xws-name" id="xws1-name">No list loaded</div>
+        <button class="xws-btn" data-action="pasteXws" data-player="1">
+          <i class="ti ti-clipboard" aria-hidden="true"></i> Paste XWS
+        </button>
+      </div>
+      <div class="xws-upload-card">
+        <div class="xws-upload-label">Player 2 list</div>
+        <div class="xws-name" id="xws2-name">No list loaded</div>
+        <button class="xws-btn" data-action="pasteXws" data-player="2">
+          <i class="ti ti-clipboard" aria-hidden="true"></i> Paste XWS
+        </button>
+      </div>
+    </div>
+
+    <!-- Score totals — tap to open scoring sheet -->
+    <div class="score-wrap">
+      <div class="score-card" data-action="openSheet" data-player="1">
+        <div class="score-player">Player 1</div>
+        <div class="score-num" id="score1-num">0</div>
+        <div class="score-tap-hint">tap to score</div>
+      </div>
+      <div class="score-card" data-action="openSheet" data-player="2">
+        <div class="score-player">Player 2</div>
+        <div class="score-num" id="score2-num">0</div>
+        <div class="score-tap-hint">tap to score</div>
+      </div>
+    </div>
+
+    <!-- Session sync -->
+    <div class="session-card" id="session-card">
+      <div class="session-status">
+        <div class="session-dot" id="session-dot"></div>
+        <div class="session-status-text" id="session-status-text">Not connected</div>
+      </div>
+      <div id="session-active" style="display:none;">
+        <div class="session-code" id="session-code-display"></div>
+        <div class="session-code-hint">Share this code with your opponent</div>
+      </div>
+      <div class="session-btns">
+        <button class="session-btn" data-action="createSession">
+          <i class="ti ti-plus" aria-hidden="true"></i> New session
+        </button>
+        <button class="session-btn" data-action="toggleJoinRow">
+          <i class="ti ti-door-enter" aria-hidden="true"></i> Join session
+        </button>
+      </div>
+      <div class="session-join-row" id="join-row" style="display:none;">
+        <input class="session-join-input" id="join-code-input" maxlength="6" placeholder="Enter 6-digit code">
+        <button class="session-btn" style="flex:0;padding:0.5rem 0.9rem;" data-action="joinSession">Go</button>
+      </div>
+    </div>
+
+    <button class="reset-all" data-action="resetAll"><i class="ti ti-refresh" aria-hidden="true" style="font-size:13px;margin-right:4px;"></i>Reset all</button>
+  </div>
+</div>
+
+<!-- RULES TAB -->
+<div id="tab-rules" class="tab-panel">
+  <div class="rules-card">
+    <div class="rules-icon"><i class="ti ti-file-text" aria-hidden="true"></i></div>
+    <div class="rules-title">XWA rules reference</div>
+    <div class="rules-desc">The official X-Wing Alliance rules reference document, version 1.4.6. Opens as a PDF in your browser.</div>
+    <a class="rules-btn" href="https://www.xwing.life/rules/rules-reference-v1.4.6.pdf" target="_blank" rel="noopener">
+      <i class="ti ti-external-link" aria-hidden="true"></i> Open rules PDF
+    </a>
+    <div class="rules-version">v1.4.6 · xwing.life</div>
+  </div>
+</div>
+
+<!-- Scoring bottom sheet -->
+<div class="sheet-overlay" id="sheet-overlay" data-action="closeSheet"></div>
+<div class="score-sheet" id="score-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="sheet-title">Player 1 — Scoring</div>
+    <div class="sheet-total" id="sheet-total">0 pts</div>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

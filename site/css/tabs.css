@@ -1,0 +1,7 @@
+.tab-bar { display: flex; border-bottom: 0.5px solid var(--color-border-tertiary); position: sticky; top: 0; background: var(--color-background-primary); z-index: 10; }
+.tab-btn { flex: 1; padding: 0.7rem 0.25rem; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; letter-spacing: 0.04em; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.tab-btn i { font-size: 18px; }
+.tab-btn.active { color: var(--color-text-primary); border-bottom-color: var(--color-text-primary); }
+
+.tab-panel { display: none; padding: 1rem 0; }
+.tab-panel.active { display: block; }
