@@ -14,7 +14,7 @@ A second player joins by scanning the session QR, which opens `<app url>?join=CO
 - Shared state lives in `js/state.js` and is mutated in place (never reassigned).
 - Modules talk through `js/utils/bus.js`: emit `'changed'` after a local state mutation (pushes to the session), `'scores'` to re-render scores/sheet, `'activity'` when timers or the session start/stop (drives wake lock). Don't import features circularly.
 - Escape any user/remote text (pilot names etc.) with `esc()` before `innerHTML`.
-- Server wire format is flat (`gameTimerSecs`, `gameTimerRunning`, `gameTimerStartedAt`, ...) and whitelisted in `server/src/config.js`. Keep client and server in sync.
+- Server wire format is flat (includes `scenarioIndex`; `gameTimerSecs`, `gameTimerRunning`, `gameTimerStartedAt`, ...) and whitelisted in `server/src/config.js`. Keep client and server in sync.
 - Timers are wall-clock based (`Date.now()`), so they survive phone sleep. While running, the synced value is the *baseline* (`secsAtStart`), not the remaining time – otherwise receivers double-count elapsed time.
 - Audio alarms are pre-scheduled on the Web Audio clock at timer start (needs a user gesture to unlock).
 

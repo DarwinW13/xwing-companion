@@ -10,6 +10,7 @@ const file = code => path.join(SESSIONS_DIR, code + '.json');   // code is valid
 const defaultState = sessionId => ({
   sessionId,
   round: 1,
+  scenarioIndex: null,
   lists: { 1: null, 2: null },
   shipState: { 1: [], 2: [] },
   missionPts: { 1: 0, 2: 0 },

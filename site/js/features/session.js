@@ -7,6 +7,7 @@ import { timerSnapshot, applyRemoteTimers } from './timers.js';
 import { updateAllScores } from './scoring.js';
 import { showListName } from './xws.js';
 import { setMode, setRound } from './tracker.js';
+import { renderScenario } from './scenarios.js';
 import qrcode from '../vendor/qrcode.mjs';
 
 const API = window.XWING_API || 'https://api.xwing.lemmerfamily.net';   // ← change if the API host moves (window.XWING_API is a local-dev/test override)
@@ -138,6 +139,7 @@ function pushState() {
         body: JSON.stringify({
           sessionId: state.sessionId,
           round: state.round, gameMode: state.mode,
+          scenarioIndex: state.lastScenario >= 0 ? state.lastScenario : null,
           lists, shipState, missionPts, pendingMission, missionHistory,
           ...timerSnapshot(),
         }),
@@ -151,6 +153,8 @@ function applyRemote(s) {
   isApplyingRemote = true;
   try {
     if (typeof s.round === 'number') setRound(s.round);
+    // Only re-render when the pick changed, so open sections don't collapse on every sync
+    if (Number.isInteger(s.scenarioIndex) && s.scenarioIndex !== state.lastScenario) renderScenario(s.scenarioIndex);
     if (s.lists) PLAYERS.forEach(p => { if (s.lists[p]) { lists[p] = s.lists[p]; showListName(p); } });
     if (s.shipState) PLAYERS.forEach(p => { if (s.shipState[p]) shipState[p] = s.shipState[p]; });
     if (s.missionPts) PLAYERS.forEach(p => { if (typeof s.missionPts[p] === 'number') missionPts[p] = s.missionPts[p]; });

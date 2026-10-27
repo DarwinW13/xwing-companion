@@ -8,7 +8,7 @@ module.exports = {
   CODE_RE: /^[0-9A-F]{6}$/,
   // Fields clients may write via POST /session/:code/update
   ALLOWED_FIELDS: [
-    'round', 'lists', 'shipState', 'missionPts', 'pendingMission', 'missionHistory',
+    'round', 'scenarioIndex', 'lists', 'shipState', 'missionPts', 'pendingMission', 'missionHistory',
     'gameMode', 'gameTimerSecs', 'gameTimerRunning', 'gameTimerStartedAt',
     'roundTimerSecs', 'roundTimerRunning', 'roundTimerStartedAt',
   ],

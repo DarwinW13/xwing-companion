@@ -1,6 +1,7 @@
 import { SCENARIOS } from '../data/scenarios.js';
 import { state } from '../state.js';
 import { registerActions } from '../utils/actions.js';
+import { emit } from '../utils/bus.js';
 import { $, esc } from '../utils/format.js';
 
 const sections = s => [
@@ -11,12 +12,11 @@ const sections = s => [
 ];
 const bullet = t => `<div class="score-row"><div class="score-dot"></div><p>${esc(t)}</p></div>`;
 
-function pickScenario() {
-  let idx;
-  do { idx = Math.floor(Math.random() * SCENARIOS.length); }
-  while (idx === state.lastScenario && SCENARIOS.length > 1);
-  state.lastScenario = idx;
+// Show scenario `idx` (used for local picks and for picks synced from the session)
+export function renderScenario(idx, { scroll = false } = {}) {
   const s = SCENARIOS[idx];
+  if (!s) return;
+  state.lastScenario = idx;
 
   $('badge').textContent = `Scenario ${idx + 1} of ${SCENARIOS.length}`;
   $('sname').textContent = s.name;
@@ -32,7 +32,15 @@ function pickScenario() {
     el.appendChild(sec);
   });
   $('result').classList.add('visible');
-  $('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (scroll) $('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function pickScenario() {
+  let idx;
+  do { idx = Math.floor(Math.random() * SCENARIOS.length); }
+  while (idx === state.lastScenario && SCENARIOS.length > 1);
+  renderScenario(idx, { scroll: true });
+  emit('changed');
 }
 
 export function initScenarios() {
