@@ -1,8 +1,14 @@
+// One JSON file per session: sessions/<CODE>.json
 const fs = require('fs');
-const { STATE_FILE } = require('./config');
+const path = require('path');
+const { SESSIONS_DIR, SESSION_TTL_MS, CODE_RE } = require('./config');
 
-const defaultState = () => ({
-  sessionId: null,
+fs.mkdirSync(SESSIONS_DIR, { recursive: true });
+
+const file = code => path.join(SESSIONS_DIR, code + '.json');   // code is validated by CODE_RE first
+
+const defaultState = sessionId => ({
+  sessionId,
   round: 1,
   lists: { 1: null, 2: null },
   shipState: { 1: [], 2: [] },
@@ -18,13 +24,29 @@ const defaultState = () => ({
   roundTimerStartedAt: null,
 });
 
-function readState() {
-  try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); }
-  catch { return defaultState(); }
+const isValidCode = code => CODE_RE.test(code);
+
+// Returns the session state, or null if the code is invalid / unknown / expired
+function readState(code) {
+  if (!isValidCode(code)) return null;
+  try { return JSON.parse(fs.readFileSync(file(code), 'utf8')); }
+  catch { return null; }
 }
 
-function writeState(state) {
-  fs.writeFileSync(STATE_FILE, JSON.stringify(state), 'utf8');
+function writeState(code, state) {
+  fs.writeFileSync(file(code), JSON.stringify(state), 'utf8');   // also refreshes mtime (activity)
 }
 
-module.exports = { defaultState, readState, writeState };
+const exists = code => isValidCode(code) && fs.existsSync(file(code));
+
+// Remove sessions with no activity for SESSION_TTL_MS
+function cleanupExpired() {
+  const cutoff = Date.now() - SESSION_TTL_MS;
+  for (const name of fs.readdirSync(SESSIONS_DIR)) {
+    if (!name.endsWith('.json')) continue;
+    const p = path.join(SESSIONS_DIR, name);
+    try { if (fs.statSync(p).mtimeMs < cutoff) fs.unlinkSync(p); } catch { /* ignore */ }
+  }
+}
+
+module.exports = { defaultState, readState, writeState, exists, isValidCode, cleanupExpired };

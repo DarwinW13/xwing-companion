@@ -9,7 +9,8 @@ import { showListName } from './xws.js';
 import { setMode, setRound } from './tracker.js';
 import qrcode from '../vendor/qrcode.mjs';
 
-const API = 'https://api.xwing.lemmerfamily.net';   // ← change if the API host moves
+const API = window.XWING_API || 'https://api.xwing.lemmerfamily.net';   // ← change if the API host moves (window.XWING_API is a local-dev/test override)
+const sessionUrl = (path = '') => `${API}/session/${state.sessionId}${path}`;
 
 let eventSource = null;
 let isApplyingRemote = false;   // suppresses echoing remote updates back to the server
@@ -42,9 +43,12 @@ function showCode(code) {
 function connectSSE() {
   if (eventSource) eventSource.close();
   setStatus('connecting');
-  eventSource = new EventSource(API + '/events');
+  eventSource = new EventSource(sessionUrl('/events'));
   eventSource.onopen = () => setStatus('connected');
-  eventSource.onerror = () => setStatus('connecting');
+  eventSource.onerror = () => {
+    if (eventSource.readyState === EventSource.CLOSED) endSession();   // server said 404: session expired
+    else setStatus('connecting');
+  };
   eventSource.onmessage = e => {
     try {
       const s = JSON.parse(e.data);
@@ -52,6 +56,16 @@ function connectSSE() {
       applyRemote(s);
     } catch (err) { console.error('SSE parse error', err); }
   };
+}
+
+function endSession() {
+  if (eventSource) eventSource.close();
+  eventSource = null;
+  state.sessionId = null;
+  $('session-active').style.display = 'none';
+  setStatus('disconnected');
+  emit('activity');
+  alert('This session has ended or expired. Start a new session to keep syncing.');
 }
 
 export function reconnectIfNeeded() {
@@ -85,12 +99,13 @@ async function joinByCode(code) {
   if (code.length !== 6) { alert('Please enter the full 6-character session code.'); return false; }
   try {
     setStatus('connecting');
-    const s = await (await fetch(API + '/state')).json();
-    if (!s.sessionId || s.sessionId !== code) {
-      alert('Session not found. Check the code and try again.');
+    const res = await fetch(`${API}/session/${code}/state`);
+    if (res.status === 404) {
+      alert('Session not found or expired. Check the code and try again.');
       setStatus('disconnected');
       return false;
     }
+    const s = await res.json();
     showCode(code);
     $('join-row').style.display = 'none';
     applyRemote(s);
@@ -118,7 +133,7 @@ function pushState() {
   clearTimeout(debounce);
   debounce = setTimeout(async () => {
     try {
-      await fetch(API + '/update', {
+      await fetch(sessionUrl('/update'), {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId: state.sessionId,

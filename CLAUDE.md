@@ -6,7 +6,7 @@ A second player joins by scanning the session QR, which opens `<app url>?join=CO
 
 ## Layout
 - `site/` – static client, uploaded as-is via cPanel File Manager to xwing.lemmerfamily.net. **No build step** (Namecheap shared hosting). Must work over HTTPS as native ES modules.
-- `server/` – Node/Express sync server at api.xwing.lemmerfamily.net (cPanel "Setup Node.js App", startup file `server.js`). **Restart the app after any server change.**
+- `server/` – Node/Express sync server at api.xwing.lemmerfamily.net (cPanel "Setup Node.js App", startup file `server.js`). **Restart the app after any server change.** Supports many simultaneous sessions: one JSON file per session in `server/sessions/` (gitignored), SSE clients grouped by code, idle sessions deleted after 24h. Routes: `POST /session/new`, `GET /session/:code/{state,events}`, `POST /session/:code/update`.
 - Details and "adding a feature" steps are in README.md.
 
 ## Conventions
@@ -25,7 +25,7 @@ A second player joins by scanning the session QR, which opens `<app url>?join=CO
 - Destructive buttons (game timer reset, reset all) use two-tap confirmation.
 
 ## Testing
-No test suite. Serve `site/` (`python3 -m http.server`) and drive it with Playwright; check the console for errors. Server: `cd server && npm install && PORT=3917 node server.js`, then curl `/session/new`, `/state`, `/update`.
+No test suite. Serve `site/` (`python3 -m http.server`) and drive it with Playwright; check the console for errors. Server: `cd server && npm install && PORT=3917 node server.js`, then curl the routes above. For a local client, set `window.XWING_API='http://localhost:3917'` and start the server with `ALLOWED_ORIGIN=http://localhost:8123`.
 
 ## Known gaps
 - Audio is unverified on real iOS/Android devices.
