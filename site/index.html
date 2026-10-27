@@ -17,25 +17,70 @@
 </head>
 <body>
 <div class="tab-bar">
-  <button class="tab-btn active" data-action="showTab" data-tab="scenarios"><i class="ti ti-dice-5" aria-hidden="true"></i>Scenarios</button>
+  <button class="tab-btn active" data-action="showTab" data-tab="setup"><i class="ti ti-adjustments" aria-hidden="true"></i>Setup</button>
   <button class="tab-btn" data-action="showTab" data-tab="tracker"><i class="ti ti-trophy" aria-hidden="true"></i>Tracker</button>
   <button class="tab-btn" data-action="showTab" data-tab="rules"><i class="ti ti-book" aria-hidden="true"></i>Rules</button>
 </div>
 
-<!-- SCENARIOS TAB -->
-<div id="tab-scenarios" class="tab-panel active">
-  <button class="roll-btn" data-action="pickScenario">
-    <div class="btn-label"><i class="ti ti-dice-5" aria-hidden="true"></i> Pick a scenario</div>
-    <div class="btn-sub">5 standard XWA scenarios</div>
-  </button>
-  <div class="result-card" id="result">
-    <div class="scenario-header">
-      <div class="scenario-badge" id="badge">Scenario</div>
-      <div class="scenario-name" id="sname"></div>
-      <div class="scenario-tagline" id="stagline"></div>
-      <div class="scenario-objectives" id="sobjectives"></div>
+<!-- SETUP TAB: session, player lists, scenario picker -->
+<div id="tab-setup" class="tab-panel active">
+  <div class="tracker-grid">
+    <!-- Session sync -->
+    <div class="session-card" id="session-card">
+      <div class="session-status">
+        <div class="session-dot" id="session-dot"></div>
+        <div class="session-status-text" id="session-status-text">Not connected</div>
+      </div>
+      <div id="session-active" style="display:none;">
+        <div class="qr-wrap" id="qr-wrap"></div>
+        <div class="session-code-hint">Your opponent scans this with their phone camera to join.</div>
+        <div class="session-code" id="session-code-display"></div>
+      </div>
+      <div class="session-btns">
+        <button class="session-btn" data-action="createSession">
+          <i class="ti ti-qrcode" aria-hidden="true"></i> New session
+        </button>
+        <button class="session-btn" data-action="toggleJoinRow">
+          <i class="ti ti-keyboard" aria-hidden="true"></i> Enter code
+        </button>
+      </div>
+      <div class="session-join-row" id="join-row" style="display:none;">
+        <input class="session-join-input" id="join-code-input" maxlength="6" placeholder="6-character code">
+        <button class="session-btn" style="flex:0;padding:0.5rem 0.9rem;" data-action="joinSession">Go</button>
+      </div>
     </div>
-    <div class="sections" id="sections"></div>
+
+    <!-- XWS paste -->
+    <div class="xws-upload-wrap">
+      <div class="xws-upload-card">
+        <div class="xws-upload-label">Player 1 list</div>
+        <div class="xws-name" id="xws1-name">No list loaded</div>
+        <button class="xws-btn" data-action="pasteXws" data-player="1">
+          <i class="ti ti-clipboard" aria-hidden="true"></i> Paste XWS
+        </button>
+      </div>
+      <div class="xws-upload-card">
+        <div class="xws-upload-label">Player 2 list</div>
+        <div class="xws-name" id="xws2-name">No list loaded</div>
+        <button class="xws-btn" data-action="pasteXws" data-player="2">
+          <i class="ti ti-clipboard" aria-hidden="true"></i> Paste XWS
+        </button>
+      </div>
+    </div>
+
+    <button class="roll-btn" data-action="pickScenario">
+      <div class="btn-label"><i class="ti ti-dice-5" aria-hidden="true"></i> Pick a scenario</div>
+      <div class="btn-sub">5 standard XWA scenarios</div>
+    </button>
+    <div class="result-card" id="result">
+      <div class="scenario-header">
+        <div class="scenario-badge" id="badge">Scenario</div>
+        <div class="scenario-name" id="sname"></div>
+        <div class="scenario-tagline" id="stagline"></div>
+        <div class="scenario-objectives" id="sobjectives"></div>
+      </div>
+      <div class="sections" id="sections"></div>
+    </div>
   </div>
 </div>
 
@@ -80,24 +125,6 @@
       </div>
     </div>
 
-    <!-- XWS paste -->
-    <div class="xws-upload-wrap">
-      <div class="xws-upload-card">
-        <div class="xws-upload-label">Player 1 list</div>
-        <div class="xws-name" id="xws1-name">No list loaded</div>
-        <button class="xws-btn" data-action="pasteXws" data-player="1">
-          <i class="ti ti-clipboard" aria-hidden="true"></i> Paste XWS
-        </button>
-      </div>
-      <div class="xws-upload-card">
-        <div class="xws-upload-label">Player 2 list</div>
-        <div class="xws-name" id="xws2-name">No list loaded</div>
-        <button class="xws-btn" data-action="pasteXws" data-player="2">
-          <i class="ti ti-clipboard" aria-hidden="true"></i> Paste XWS
-        </button>
-      </div>
-    </div>
-
     <!-- Score totals — tap to open scoring sheet -->
     <div class="score-wrap">
       <div class="score-card" data-action="openSheet" data-player="1">
@@ -109,30 +136,6 @@
         <div class="score-player">Player 2</div>
         <div class="score-num" id="score2-num">0</div>
         <div class="score-tap-hint">tap to score</div>
-      </div>
-    </div>
-
-    <!-- Session sync -->
-    <div class="session-card" id="session-card">
-      <div class="session-status">
-        <div class="session-dot" id="session-dot"></div>
-        <div class="session-status-text" id="session-status-text">Not connected</div>
-      </div>
-      <div id="session-active" style="display:none;">
-        <div class="session-code" id="session-code-display"></div>
-        <div class="session-code-hint">Share this code with your opponent</div>
-      </div>
-      <div class="session-btns">
-        <button class="session-btn" data-action="createSession">
-          <i class="ti ti-plus" aria-hidden="true"></i> New session
-        </button>
-        <button class="session-btn" data-action="toggleJoinRow">
-          <i class="ti ti-door-enter" aria-hidden="true"></i> Join session
-        </button>
-      </div>
-      <div class="session-join-row" id="join-row" style="display:none;">
-        <input class="session-join-input" id="join-code-input" maxlength="6" placeholder="Enter 6-digit code">
-        <button class="session-btn" style="flex:0;padding:0.5rem 0.9rem;" data-action="joinSession">Go</button>
       </div>
     </div>
 

@@ -1,7 +1,8 @@
 # X-Wing Companion
 
 Mobile web app for X-Wing Miniatures under X-Wing Alliance (XWA) 2.5 rules, used on iPhone Safari and Android Chrome.
-Tabs: Scenarios (random picker), Tracker (timers, rounds, XWS scoring, live two-player sync), Rules (link to PDF).
+Tabs: Setup (live-session QR code, XWS list paste, random scenario picker), Tracker (timers, rounds, scoring sheet), Rules (link to PDF).
+A second player joins by scanning the session QR, which opens `<app url>?join=CODE` and auto-connects (`autoJoinFromUrl` in `session.js`). QR rendering uses the vendored MIT-licensed `site/js/vendor/qrcode.mjs` (no build step, no CDN).
 
 ## Layout
 - `site/` – static client, uploaded as-is via cPanel File Manager to xwing.lemmerfamily.net. **No build step** (Namecheap shared hosting). Must work over HTTPS as native ES modules.

@@ -9,7 +9,7 @@ import { initTimers, resyncTimers, anyTimerRunning } from './features/timers.js'
 import { initTracker } from './features/tracker.js';
 import { initXws } from './features/xws.js';
 import { initSheet } from './features/sheet.js';
-import { initSession, reconnectIfNeeded } from './features/session.js';
+import { initSession, reconnectIfNeeded, autoJoinFromUrl } from './features/session.js';
 
 initTabs();
 initScenarios();
@@ -19,6 +19,7 @@ initXws();
 initSheet();
 initSession();
 initActions();   // after all registerActions calls
+autoJoinFromUrl();
 
 // Phone woke up: resync timers, re-acquire wake lock, reconnect live sync
 document.addEventListener('visibilitychange', () => {

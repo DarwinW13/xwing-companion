@@ -7,6 +7,7 @@ import { timerSnapshot, applyRemoteTimers } from './timers.js';
 import { updateAllScores } from './scoring.js';
 import { showListName } from './xws.js';
 import { setMode, setRound } from './tracker.js';
+import qrcode from '../vendor/qrcode.mjs';
 
 const API = 'https://api.xwing.lemmerfamily.net';   // ← change if the API host moves
 
@@ -20,10 +21,21 @@ function setStatus(s) {   // 'disconnected' | 'connecting' | 'connected'
     s === 'connected' ? 'Connected — syncing live' : s === 'connecting' ? 'Connecting…' : 'Not connected';
 }
 
+// Link a phone camera can open: this app's own URL plus the session code
+const joinUrl = code => `${location.origin}${location.pathname}?join=${code}`;
+
+function renderQr(code) {
+  const qr = qrcode(0, 'M');
+  qr.addData(joinUrl(code));
+  qr.make();
+  $('qr-wrap').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true, alt: 'QR code to join this session' });
+}
+
 function showCode(code) {
   state.sessionId = code;
   emit('activity');
   $('session-code-display').textContent = code;
+  renderQr(code);
   $('session-active').style.display = 'block';
 }
 
@@ -67,25 +79,38 @@ function toggleJoinRow() {
   if (row.style.display === 'flex') $('join-code-input').focus();
 }
 
-async function joinSession() {
-  const code = $('join-code-input').value.trim().toUpperCase();
-  if (code.length !== 6) { alert('Please enter the full 6-character session code.'); return; }
+// Join by code. Returns true on success. `quiet` suppresses the not-found alert wording only.
+async function joinByCode(code) {
+  code = code.trim().toUpperCase();
+  if (code.length !== 6) { alert('Please enter the full 6-character session code.'); return false; }
   try {
     setStatus('connecting');
     const s = await (await fetch(API + '/state')).json();
     if (!s.sessionId || s.sessionId !== code) {
       alert('Session not found. Check the code and try again.');
       setStatus('disconnected');
-      return;
+      return false;
     }
     showCode(code);
     $('join-row').style.display = 'none';
     applyRemote(s);
     connectSSE();
+    return true;
   } catch {
     alert('Could not reach sync server.');
     setStatus('disconnected');
+    return false;
   }
+}
+
+const joinSession = () => joinByCode($('join-code-input').value);
+
+// Opened from a scanned QR code (?join=ABC123): join straight away, then clean the URL
+export async function autoJoinFromUrl() {
+  const code = new URLSearchParams(location.search).get('join');
+  if (!code) return;
+  history.replaceState(null, '', location.pathname);
+  await joinByCode(code);
 }
 
 function pushState() {
