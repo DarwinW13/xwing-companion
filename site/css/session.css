@@ -14,7 +14,7 @@
 .session-join-input { flex: 1; padding: 0.5rem 0.75rem; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 14px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; outline: none; }
 .session-join-input::placeholder { color: var(--color-text-tertiary); font-weight: 400; letter-spacing: 0; text-transform: none; }
 
-.qr-wrap { width: 200px; max-width: 70%; margin: 4px auto 10px; padding: 8px; background: #fff; border-radius: var(--border-radius-md); line-height: 0; }
+.qr-wrap { width: 160px; max-width: 60%; margin: 4px auto 10px; padding: 8px; background: #fff; border-radius: var(--border-radius-md); line-height: 0; }
 .qr-wrap svg { width: 100%; height: auto; display: block; }
 .tracker-grid > .roll-btn { margin-bottom: 0; }
 .session-code { margin-bottom: 8px; }
