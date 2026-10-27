@@ -1,7 +1,8 @@
 # xwing-companion
-Web app for tracking score and time for the  X-WIng Tabletop Miniatures Game, Version 2.5 (XWA).
+Web app for tracking score and time for the  X-Wing Tabletop Miniatures Game, Version 2.5 (XWA).
 
 ## Layout
+```
 site/            upload contents to xwing.lemmerfamily.net (static, no build step)
   index.html     markup only; buttons use data-action="name"
   css/           one file per area (variables, tabs, scenarios, tracker, scoring, sheet, session, rules)
@@ -12,6 +13,7 @@ site/            upload contents to xwing.lemmerfamily.net (static, no build ste
   js/utils/      actions (click delegation), bus (events), audio, wakelock, format
 server/          upload to the Node app root; startup file stays server.js
   src/           config, store (JSON file), hub (SSE), routes, app
+```
 
 ## Adding a feature
 1. Put markup in index.html with data-action="myAction".
